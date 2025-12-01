@@ -22,5 +22,5 @@ BEGINFILE {
 }
 
 ENDFILE {
-    print zeroes " zeroes (final position " dial ")"
+    print FILENAME ": " zeroes " zeroes (final position " dial ")"
 }
