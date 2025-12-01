@@ -3,24 +3,47 @@
 BEGINFILE {
     dial = 50
     zeroes = 0
+    clicks = 0
 }
 
 /^L[1-9][0-9]*/ {
-    rotation = substr($1, 2)
-    dial = (dial - rotation + 100) % 100
+    rotation = int(substr($1, 2))
+    while (rotation > 100) {
+        rotation -= 100
+        clicks += 1
+    }
     if (dial == 0) {
+        dial = 100
+    }
+    dial -= rotation
+    if (dial < 0) {
+        dial += 100
+        clicks += 1
+    } else if (dial == 0) {
         zeroes += 1
+        clicks += 1
     }
 }
 
 /^R[1-9][0-9]*/ {
-    rotation = substr($1, 2)
-    dial = (dial + rotation) % 100
-    if (dial == 0) {
+    rotation = int(substr($1, 2))
+    while (rotation > 100) {
+        rotation -= 100
+        clicks += 1
+    }
+    dial += rotation
+    if (dial > 100) {
+        dial -= 100
+        clicks += 1
+    } else if (dial == 100) {
+        dial -= 100
         zeroes += 1
+        clicks += 1
     }
 }
 
+# { print "input " $1 ", dial " dial ", zeroes " zeroes ", clicks " clicks }
+
 ENDFILE {
-    print FILENAME ": " zeroes " zeroes (final position " dial ")"
+    print FILENAME ": " zeroes " zeroes, " clicks " clicks (final position " dial ")"
 }
