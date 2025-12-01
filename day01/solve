@@ -1,0 +1,26 @@
+#!/usr/bin/awk -f
+
+BEGINFILE {
+    dial = 50
+    zeroes = 0
+}
+
+/^L[1-9][0-9]*/ {
+    rotation = substr($1, 2)
+    dial = (dial - rotation + 100) % 100
+    if (dial == 0) {
+        zeroes += 1
+    }
+}
+
+/^R[1-9][0-9]*/ {
+    rotation = substr($1, 2)
+    dial = (dial + rotation) % 100
+    if (dial == 0) {
+        zeroes += 1
+    }
+}
+
+ENDFILE {
+    print zeroes " zeroes (final position " dial ")"
+}
