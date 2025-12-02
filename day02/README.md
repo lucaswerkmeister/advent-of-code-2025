@@ -36,6 +36,10 @@ but then performed very well again and still gave me the correct answer on the f
 There’s presumably a more mathematical way to solve this without iterating through the input ranges at all.
 (Just generate the candidates, as multiples of 11, 101, 1001 etc., and check how many ranges each candidate is in?)
 
+It also hurts a bit to consider that as a regex, this was expressible *so* tersely (`^(.+)+$`).
+I expect that if I look at other people’s solutions,
+I’ll quickly discover that this version could perform quite well enough after all.
+
 ## Usage
 
 ```sh
