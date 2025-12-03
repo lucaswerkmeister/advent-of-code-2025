@@ -4,7 +4,7 @@ The [day 2 puzzle][day2] asks you to count repeated numbers.
 (I’m not sure if there’s an English term for this;
 in German I’d call these „Schnapszahlen“,
 which [English Wiktionary][Schnapszahl] translates as “repdigit”,
-but according to [Wikipedia][repdigit], that’s restricted to repetions of a single digit.
+but according to [Wikipedia][repdigit], that’s restricted to repetions of a single digit.)
 
 This sounded like a problem where a naive implementation in an interpreted language would be quite slow,
 so I decided to go for Rust.
