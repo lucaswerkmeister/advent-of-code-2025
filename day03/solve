@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+for file; do
+    let output=0
+    while IFS= read line; do
+        for digit1 in {9..1}; do
+            for digit2 in {9..1}; do
+                if [[ $line =~ $digit1.*$digit2 ]]; then
+                    let output+='digit1 * 10 + digit2'
+                    continue 3
+                fi
+            done
+        done
+    done < "$file"
+    printf '%s: %d\n' "$file" "$output"
+done
