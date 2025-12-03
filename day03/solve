@@ -3,14 +3,20 @@
 for file; do
     let output=0
     while IFS= read line; do
-        for digit1 in {9..1}; do
-            for digit2 in {9..1}; do
-                if [[ $line =~ $digit1.*$digit2 ]]; then
-                    let output+='digit1 * 10 + digit2'
-                    continue 3
+        rest=$line
+        joltage=
+        for nth in {1..12}; do
+            # $candidates = all but the last $nth-1 digits of $rest
+            if ((nth == 12)); then candidates=$rest; else candidates=${rest::-(12-nth)}; fi
+            for digit in {9..1}; do
+                if [[ $candidates = *$digit* ]]; then
+                    joltage="$joltage$digit"
+                    rest=${rest#*$digit}
+                    break
                 fi
             done
         done
+        let output+=joltage
     done < "$file"
     printf '%s: %d\n' "$file" "$output"
 done
