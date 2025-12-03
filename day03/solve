@@ -13,6 +13,7 @@ for file; do
             if ((nth == length)); then candidates=$rest; else candidates=${rest::-(length-nth)}; fi
             for digit in {9..1}; do
                 if [[ $candidates = *$digit* ]]; then
+                    # we found a digit, add it to the joltage and remove everything up to it from the rest of the line
                     joltage="$joltage$digit"
                     rest=${rest#*$digit}
                     break
