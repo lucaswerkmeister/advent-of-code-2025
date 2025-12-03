@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
+# change to length=2 for part 1
+length=12
+
 for file; do
     let output=0
     while IFS= read line; do
         rest=$line
         joltage=
-        for nth in {1..12}; do
+        for ((nth=1; nth<=length; nth++)); do
             # $candidates = all but the last $nth-1 digits of $rest
-            if ((nth == 12)); then candidates=$rest; else candidates=${rest::-(12-nth)}; fi
+            if ((nth == length)); then candidates=$rest; else candidates=${rest::-(length-nth)}; fi
             for digit in {9..1}; do
                 if [[ $candidates = *$digit* ]]; then
                     joltage="$joltage$digit"
