@@ -17,7 +17,7 @@ It’s pretty slow (almost 39 seconds for the full input!), but it works.
 
 Each listed input file is processed separately.
 The main solution printed at the end (per file) is that for part 2;
-it also prints intermediate progress line,
+it also prints intermediate progress lines,
 and the part 1 solution is the number in the first of those lines
 (the cells that can be removed in the first iteration).
 
