@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 for file; do
+    # read input into an array of lines
     mapfile -t lines < "$file"
 
     let total_removed=0
     while true; do
+        # coordinates of accessible rolls (both arrays have the same length)
         accessible_rows=()
         accessible_cols=()
 
@@ -19,9 +21,11 @@ for file; do
                 for dx in -1 0 1; do
                     for dy in -1 0 1; do
                         if ((dx == 0 && dy == 0)); then
+                            # don’t the roll itself as its neighbor
                             continue
                         fi
                         if ((row+dx < 0 || col+dy < 0 || row+dx > ${#lines[@]} || row+dy > ${#lines[row]})); then
+                            # out of bounds, nothing adjacent here
                             continue
                         fi
                         dline=${lines[row+dx]}
@@ -39,12 +43,14 @@ for file; do
         done
 
         if ((${#accessible_rows[@]} == 0)); then
+            # nothing more to remove, print the solution and we’re done
             printf '%s: removed %d rolls of paper in total\n' "$file" "$total_removed"
             break
         fi
 
         printf '%s: removing %d accessible rolls of paper\n' "$file" "${#accessible_rows[@]}"
         for index in "${!accessible_rows[@]}"; do
+            # replace character at (row,col) with a '.'
             row=${accessible_rows[index]}
             col=${accessible_cols[index]}
             line=${lines[row]}
