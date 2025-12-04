@@ -3,35 +3,54 @@
 for file; do
     mapfile -t lines < "$file"
 
-    let accessible=0
-    for ((row=0; row<${#lines[@]}; row++)); do
-        for ((col=0; col<${#lines[row]}; col++)); do
-            line=${lines[row]}
-            char=${line:col:1}
-            if [[ $char != '@' ]]; then
-                continue
-            fi
-            let adjacent_rolls=0
-            for dx in -1 0 1; do
-                for dy in -1 0 1; do
-                    if ((dx == 0 && dy == 0)); then
-                        continue
-                    fi
-                    if ((row+dx < 0 || col+dy < 0 || row+dx > ${#lines[@]} || row+dy > ${#lines[row]})); then
-                        continue
-                    fi
-                    dline=${lines[row+dx]}
-                    dchar=${dline:col+dy:1}
-                    if [[ $dchar == '@' ]]; then
-                        let adjacent_rolls++
-                    fi
-                done
-            done
-            if ((adjacent_rolls < 4)); then
-                let accessible++
-            fi
-        done
-    done
+    let total_removed=0
+    while true; do
+        accessible_rows=()
+        accessible_cols=()
 
-    printf '%s: %d accessible rolls of paper\n' "$file" "$accessible"
+        for ((row=0; row<${#lines[@]}; row++)); do
+            for ((col=0; col<${#lines[row]}; col++)); do
+                line=${lines[row]}
+                char=${line:col:1}
+                if [[ $char != '@' ]]; then
+                    continue
+                fi
+                let adjacent_rolls=0
+                for dx in -1 0 1; do
+                    for dy in -1 0 1; do
+                        if ((dx == 0 && dy == 0)); then
+                            continue
+                        fi
+                        if ((row+dx < 0 || col+dy < 0 || row+dx > ${#lines[@]} || row+dy > ${#lines[row]})); then
+                            continue
+                        fi
+                        dline=${lines[row+dx]}
+                        dchar=${dline:col+dy:1}
+                        if [[ $dchar == '@' ]]; then
+                            let adjacent_rolls++
+                        fi
+                    done
+                done
+                if ((adjacent_rolls < 4)); then
+                    accessible_rows+=("$row")
+                    accessible_cols+=("$col")
+                fi
+            done
+        done
+
+        if ((${#accessible_rows[@]} == 0)); then
+            printf '%s: removed %d rolls of paper in total\n' "$file" "$total_removed"
+            break
+        fi
+
+        printf '%s: removing %d accessible rolls of paper\n' "$file" "${#accessible_rows[@]}"
+        for index in "${!accessible_rows[@]}"; do
+            row=${accessible_rows[index]}
+            col=${accessible_cols[index]}
+            line=${lines[row]}
+            line=${line::col}.${line:col+1:${#line}}
+            lines[row]=$line
+        done
+        let total_removed+=${#accessible_rows[@]}
+    done
 done
