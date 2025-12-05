@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+for file; do
+    range_firsts=()
+    range_lasts=()
+    exec 3<"$file"
+
+    while IFS= read -r line; do
+        if [[ $line == '' ]]; then
+            break
+        fi
+        range_firsts+=(${line%-*})
+        range_lasts+=(${line#*-})
+    done <&3
+
+    let fresh=0
+    while IFS= read -r id; do
+        for index in "${!range_firsts[@]}"; do
+            first=${range_firsts[index]}
+            last=${range_lasts[index]}
+            if ((first <= id && id <= last)); then
+                let fresh++
+                break
+            fi
+        done
+    done <&3
+
+    printf '%s: %d fresh IDs\n' "$file" "$fresh"
+done
