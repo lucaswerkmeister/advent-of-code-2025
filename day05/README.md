@@ -38,7 +38,7 @@ and then just iterate over the remaining ones and add up their sizes.
 
 ```sh
 ./solve input.sample  # Bash
-./solve.py input.sample input  # python
+./solve.py input.sample input  # Python
 ```
 
 Both implementations take a list of input files, process them separately, and print out the part 1 and then part 2 solutions;
