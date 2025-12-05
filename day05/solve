@@ -13,17 +13,32 @@ for file; do
         range_lasts+=(${line#*-})
     done <&3
 
-    let fresh=0
+    let fresh_available=0
     while IFS= read -r id; do
         for index in "${!range_firsts[@]}"; do
             first=${range_firsts[index]}
             last=${range_lasts[index]}
             if ((first <= id && id <= last)); then
-                let fresh++
+                let fresh_available++
                 break
             fi
         done
     done <&3
 
-    printf '%s: %d fresh IDs\n' "$file" "$fresh"
+    printf '%s: %d fresh IDs available\n' "$file" "$fresh_available"
+
+    let fresh_possible=0
+    fresh_counted=()
+    for index in "${!range_firsts[@]}"; do
+        first=${range_firsts[index]}
+        last=${range_lasts[index]}
+        for ((id=first; id<=last; id++)); do
+            if [[ ${fresh_counted[id]:-} == '' ]]; then
+                let fresh_possible++
+                fresh_counted[id]=1
+            fi
+        done
+    done
+
+    printf '%s: %d fresh IDs possible\n' "$file" "$fresh_possible"
 done
