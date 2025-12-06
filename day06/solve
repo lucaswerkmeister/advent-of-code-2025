@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+for file; do
+    # read $lines array
+    mapfile -t lines < "$file"
+
+    # split last line into $operators array and remove it from $lines
+    read -r -a operators <<< "${lines[-1]}"
+    unset 'lines[-1]'
+
+    let grand_total=0
+    for index in "${!operators[@]}"; do
+        operator=${operators[index]}
+        if [[ $operator == '*' ]]; then
+            let answer=1
+            for line in "${lines[@]}"; do
+                read -r -a numbers <<< "$line"
+                let answer*=numbers[index]
+            done
+        elif [[ $operator == '+' ]]; then
+            let answer=0
+            for line in "${lines[@]}"; do
+                read -r -a numbers <<< "$line"
+                let answer+=numbers[index]
+            done
+        else
+            printf >&2 '%s: unknown operator: %s\n' "$file" "$operator"
+            continue 2
+        fi
+        let grand_total+=answer
+    done
+
+    printf '%s: grand total is %d\n' "$file" "$grand_total"
+done
