@@ -4,30 +4,43 @@ for file; do
     # read $lines array
     mapfile -t lines < "$file"
 
-    # split last line into $operators array and remove it from $lines
-    read -r -a operators <<< "${lines[-1]}"
+    # make sure the input ends with a clean blank column where we add the final answer to the grand total
+    for ((index = 0; index < ${#lines[@]}; index++)); do
+        lines[index]+=' '
+    done
+
+    # split last line into separate $operators string
+    operators=${lines[-1]}
     unset 'lines[-1]'
 
     let grand_total=0
-    for index in "${!operators[@]}"; do
-        operator=${operators[index]}
+    let answer=0
+    for ((index = 0; index < ${#operators}; index++)); do
+        operator=${operators:index:1}
         if [[ $operator == '*' ]]; then
             let answer=1
-            for line in "${lines[@]}"; do
-                read -r -a numbers <<< "$line"
-                let answer*=numbers[index]
-            done
+            current_operator=$operator
         elif [[ $operator == '+' ]]; then
             let answer=0
-            for line in "${lines[@]}"; do
-                read -r -a numbers <<< "$line"
-                let answer+=numbers[index]
-            done
-        else
-            printf >&2 '%s: unknown operator: %s\n' "$file" "$operator"
-            continue 2
+            current_operator=$operator
         fi
-        let grand_total+=answer
+
+        number=''
+        for line in "${lines[@]}"; do
+            digit=${line:index:1}
+            if [[ $digit =~ [0-9] ]]; then
+                number+=$digit
+            fi
+        done
+        if [[ $number != '' ]]; then
+            if [[ $current_operator == '+' ]]; then
+                let answer+=number
+            else
+                let answer*=number
+            fi
+        else
+            let grand_total+=answer
+        fi
     done
 
     printf '%s: grand total is %d\n' "$file" "$grand_total"
