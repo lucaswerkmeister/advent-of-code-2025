@@ -11,6 +11,7 @@ it’s not the fastest (amusingly, part 1 is substantially slower than part 2,
 probably because I’m splitting the input lines into numbers over and over again on account of Bash not having nested arrays),
 but it was good enough.
 I don’t think I have a lot else to say about it.
+(The part 2 solution make use of the fact that all the operators in the input are left-aligned.)
 
 ## Usage
 

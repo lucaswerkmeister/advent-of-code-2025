@@ -16,6 +16,7 @@ for file; do
     let grand_total=0
     let answer=0
     for ((index = 0; index < ${#operators}; index++)); do
+        # process operator (if any)
         operator=${operators:index:1}
         if [[ $operator == '*' ]]; then
             let answer=1
@@ -25,6 +26,7 @@ for file; do
             current_operator=$operator
         fi
 
+        # assemble number (if any)
         number=''
         for line in "${lines[@]}"; do
             digit=${line:index:1}
@@ -32,6 +34,8 @@ for file; do
                 number+=$digit
             fi
         done
+
+        # apply number with operator to answer, or add answer to grand total if this is the blank separator column
         if [[ $number != '' ]]; then
             if [[ $current_operator == '+' ]]; then
                 let answer+=number
