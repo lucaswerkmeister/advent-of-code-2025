@@ -1,6 +1,6 @@
 # Day 6
 
-The [day 6 puzzle][day6] asks you perform calculations on input given vertically instead of horizontally.
+The [day 6 puzzle][day6] asks you to perform calculations on input given vertically instead of horizontally.
 
 This probably would’ve been very straightforward to do if there was a simple way to “diagonally mirror” an input file on Unixoid systems,
 but I’m not aware of one (there’s e.g. `rev` and `tac` to mirror “horizontally” and “vertically”,
