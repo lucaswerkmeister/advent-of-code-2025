@@ -25,6 +25,5 @@ for file in sys.argv[1:]:
             for processed_line in processed_lines:
                 new_worlds[processed_line] = new_worlds.get(processed_line, 0) + its_worlds
         worlds = new_worlds
-        print(f'line {lineno}/{len(lines)} done', file=sys.stderr)
 
     print(f'{file}: {sum(worlds.values())} worlds')
