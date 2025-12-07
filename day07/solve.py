@@ -8,25 +8,21 @@ for file in sys.argv[1:]:
 
     for lineno in range(1, len(lines)):
         line = lines[lineno]
+        beam_char = { 1: 'S' }.get(lineno, '|')
         new_worlds = []
         for world in worlds:
             previous_line = world[-1]
-            processed_lines = None
-            for index, char in enumerate(line):
-                previous_char = previous_line[index]
-                if previous_char not in {'|', 'S'}:
-                    continue
-                if char == '.':
-                    processed_lines = [line[:index] + '|' + line[index+1:]]
-                elif char == '^':
-                    processed_lines = [
-                        line[:index-1] + '|^.' + line[index+2:],
-                        line[:index-1] + '.^|' + line[index+2:],
-                    ]
-                else:
-                    raise ValueError(f"Unknown char '{char}': {line}")
-                break  # only one beam can be active
-            assert processed_lines is not None, f"no tachyon beam found in previous line: {line}"
+            beam_index = previous_line.index(beam_char)
+            below_beam_char = line[beam_index]
+            if below_beam_char == '.':
+                processed_lines = [line[:beam_index] + '|' + line[beam_index+1:]]
+            elif below_beam_char == '^':
+                processed_lines = [
+                    line[:beam_index-1] + '|^.' + line[beam_index+2:],
+                    line[:beam_index-1] + '.^|' + line[beam_index+2:],
+                ]
+            else:
+                raise ValueError(f"Unknown char '{char}': {line}")
             for processed_line in processed_lines:
                 new_worlds.append(world + [processed_line])
         worlds = new_worlds
