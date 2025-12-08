@@ -14,8 +14,6 @@ def process(file: str, num_connections: int) -> int:
 
     shortest_connections = []
     for i, box1 in enumerate(boxes):
-        if i % 10 == 0:
-            print(f'{i}/{num_connections}')
         for box2 in boxes[i+1:]:
             pair = (box1, box2)
             distance = math.dist(box1, box2)
