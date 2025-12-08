@@ -12,23 +12,18 @@ def process(file: str, num_connections: int) -> int:
             boxes.append((int(x), int(y), int(z)))
     boxes.sort()
 
-    connections = set()
-    for i in range(num_connections):
+    shortest_connections = []
+    for i, box1 in enumerate(boxes):
         if i % 10 == 0:
             print(f'{i}/{num_connections}')
-        shortest_distance = math.inf
-        shortest_pair = (None, None)
-        for i, box1 in enumerate(boxes):
-            for box2 in boxes[i+1:]:
-                pair = (box1, box2)
-                if pair in connections:
-                    continue
-                distance = math.dist(box1, box2)
-                if distance < shortest_distance:
-                    shortest_distance = distance
-                    shortest_pair = pair
-        connections.add(shortest_pair)
-    # note: because we sorted the boxes and only test each pair once, each pair is also sorted
+        for box2 in boxes[i+1:]:
+            pair = (box1, box2)
+            distance = math.dist(box1, box2)
+            if len(shortest_connections) < num_connections or distance < shortest_connections[-1][0]:
+                shortest_connections.append((distance, pair))
+                shortest_connections.sort()
+                shortest_connections = shortest_connections[:num_connections]
+    connections = {pair for distance, pair in shortest_connections}
 
     circuits = {}
     for pair in connections:
