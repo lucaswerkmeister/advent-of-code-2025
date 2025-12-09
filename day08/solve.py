@@ -54,13 +54,11 @@ def process(file: str, part1_connections: int, part2_connections_guess: int) -> 
     # continue connecting circuits for part 2
     for pair in part2_connections:
         add_pair_to_circuits(pair, circuits)
-        if len(circuits) == 1:
+        if len(circuits) == 1 and len(next(iter(circuits.values()))) == len(boxes):
             break
     else:
         raise ValueError(f'Ran out of connections – increase part2_connections_guess!')
 
-    assert len(next(iter(circuits.values()))) == len({box for pair in all_connections for box in pair}), \
-        f'{len(next(iter(circuits.values())))} boxes in circuits but {len({box for pair in all_connections for box in pair})} boxes total'
     box1, box2 = pair
     product_part2 = box1[0] * box2[0]
 
