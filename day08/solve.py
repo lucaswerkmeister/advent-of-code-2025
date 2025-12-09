@@ -76,6 +76,9 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
         # update circuit
         circuit = circuits[box1]
         assert box1 in circuit
+        if box2 in circuit:
+            # no need to look for anything to merge
+            return
         circuit.add(box2)
         # find other circuit to potentially merge this one with
         for other_box, other_circuit in circuits.items():
@@ -123,6 +126,9 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
             # find other circuit to add to
             if box1 in circuit or box2 in circuit:
                 branch = 'box1 in circuit or box2 in circuit'
+                if box1 in circuit and box2 in circuit:
+                    # no need to update anything or look for anything to merge
+                    return
                 # update circuit
                 circuit.add(box1)
                 circuit.add(box2)
