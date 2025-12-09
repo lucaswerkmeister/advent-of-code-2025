@@ -139,3 +139,6 @@ for file in sys.argv[1:]:
 
     print(f'{file}: largest possible area is {max_part1_area}')
     print(f'{file}: largest allowed area is {max_part2_area}')
+    if file == 'input.sample':
+        assert max_part1_area == 50
+        assert max_part2_area == 24
