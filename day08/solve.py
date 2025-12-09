@@ -98,9 +98,7 @@ def process(file: str, num_connections: int) -> int:
                         if box1 in other_circuit or box2 in other_circuit:
                             branch += ', box1 in other_circuit or box2 in other_circuit'
                             # merge them
-                            print(f'before: {len(circuit)=}, {len(other_circuit)=}')
                             circuit.update(other_circuit)
-                            print(f'after: {len(circuit)=}')
                             if box1 < other_circuit_box or other_box < other_circuit_box:
                                 # our circuit’s key is smaller, keep that index and drop the other
                                 del circuits[other_circuit_box]
@@ -124,7 +122,6 @@ def process(file: str, num_connections: int) -> int:
 
     for box, circuit in circuits.items():
         assert box == min(circuit)
-        print(f'{len(circuit)}: {box} = {circuit}')
 
     assert len({box for circuit in circuits.values() for box in circuit}) == sum(len(circuit) for circuit in circuits.values()), \
         f'{len({box for circuit in circuits.values() for box in circuit})} boxes in all circuits but individual circuits sum to {sum(len(circuit) for circuit in circuits.values())}!'
@@ -133,7 +130,6 @@ def process(file: str, num_connections: int) -> int:
 
     circuit_sizes = [len(circuit) for circuit in circuits.values()]
     circuit_sizes.sort(reverse=True)
-    # print(circuit_sizes)
     return functools.reduce(operator.mul, circuit_sizes[:3], 1)
 
 for file in sys.argv[1:]:
