@@ -11,7 +11,9 @@ type Circuit = set[Box]
 type Circuits = dict[Box, Circuit]
 """Invariant: the key of each Circuit is its *smallest* member Box."""
 
-def process(file: str, num_connections: int) -> int:
+def process(file: str, part1_connections: int, part2_connections_guess: int) -> tuple[int, int]:
+    # read file, find shortest connections
+
     boxes: list[Box] = []
     with open(file) as f:
         while line := f.readline():
@@ -24,14 +26,17 @@ def process(file: str, num_connections: int) -> int:
         for box2 in boxes[i+1:]:
             pair = (box1, box2)
             distance = math.dist(box1, box2)
-            if len(shortest_connections) < num_connections or distance < shortest_connections[-1][0]:
+            if len(shortest_connections) < part2_connections_guess or distance < shortest_connections[-1][0]:
                 shortest_connections.append((distance, pair))
                 shortest_connections.sort()
-                shortest_connections = shortest_connections[:num_connections]
-    connections = {pair for distance, pair in shortest_connections}
+                shortest_connections = shortest_connections[:part2_connections_guess]
+    all_connections: list[Pair] = [pair for distance, pair in shortest_connections]
+    part1_connections, part2_connections = all_connections[:part1_connections], all_connections[part1_connections:]
+
+    # connect circuits for part 1
 
     circuits: Circuits = {}
-    for pair in connections:
+    for pair in part1_connections:
         add_pair_to_circuits(pair, circuits)
 
     for box, circuit in circuits.items():
@@ -39,12 +44,28 @@ def process(file: str, num_connections: int) -> int:
 
     assert len({box for circuit in circuits.values() for box in circuit}) == sum(len(circuit) for circuit in circuits.values()), \
         f'{len({box for circuit in circuits.values() for box in circuit})} boxes in all circuits but individual circuits sum to {sum(len(circuit) for circuit in circuits.values())}!'
-    assert {box for pair in connections for box in pair} == {box for circuit in circuits.values() for box in circuit}, \
-        f'{len({box for pair in connections for box in pair})} boxes in connections but {len({box for circuit in circuits.values() for box in circuit})} boxes in circuits!'
+    assert {box for pair in part1_connections for box in pair} == {box for circuit in circuits.values() for box in circuit}, \
+        f'{len({box for pair in part1_connections for box in pair})} boxes in connections but {len({box for circuit in circuits.values() for box in circuit})} boxes in circuits!'
 
     circuit_sizes = [len(circuit) for circuit in circuits.values()]
     circuit_sizes.sort(reverse=True)
-    return functools.reduce(operator.mul, circuit_sizes[:3], 1)
+    product_part1 = functools.reduce(operator.mul, circuit_sizes[:3], 1)
+
+    # continue connecting circuits for part 2
+    for pair in part2_connections:
+        add_pair_to_circuits(pair, circuits)
+        if len(circuits) == 1:
+            break
+    else:
+        raise ValueError(f'Ran out of connections – increase part2_connections_guess!')
+
+    assert len(next(iter(circuits.values()))) == len({box for pair in all_connections for box in pair}), \
+        f'{len(next(iter(circuits.values())))} boxes in circuits but {len({box for pair in all_connections for box in pair})} boxes total'
+    box1, box2 = pair
+    product_part2 = box1[0] * box2[0]
+
+    return product_part1, product_part2
+
 
 def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
     # check the invariant out of paranoia
@@ -143,9 +164,13 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
 
 
 for file in sys.argv[1:]:
-    connections = {
+    part1_connections = {
         'input.sample': 10,
         'input': 1000,
     }[file]
-    product = process(file, connections)
-    print(f'{file}: the product of the three largest circuit sizes is {product}')
+    part2_connections_guess = {
+        'input.sample': 50,
+        'input': 50000,
+    }[file]
+    product_part1, product_part2 = process(file, part1_connections, part2_connections_guess)
+    print(f'{file}: the product of the three largest circuit sizes is {product_part1}; the product of the X coordinates of the last connection is {product_part2}')
