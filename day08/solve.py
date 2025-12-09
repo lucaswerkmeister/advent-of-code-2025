@@ -174,7 +174,7 @@ for file in sys.argv[1:]:
     }[file]
     part2_connections_guess = {
         'input.sample': 50,
-        'input': 50000,
+        'input': 10000,
     }[file]
     product_part1, product_part2 = process(file, part1_connections, part2_connections_guess)
     print(f'{file}: the product of the three largest circuit sizes is {product_part1}; the product of the X coordinates of the last connection is {product_part2}')
