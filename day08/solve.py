@@ -4,15 +4,22 @@ import math
 import operator
 import sys
 
+type Box = tuple[int, int, int]
+type Pair = tuple[box, box]
+type Distance = float
+type Circuit = set[Box]
+type Circuits = dict[Box, Circuit]
+"""Invariant: the key of each Circuit is its *smallest* member Box."""
+
 def process(file: str, num_connections: int) -> int:
-    boxes = []
+    boxes: list[Box] = []
     with open(file) as f:
         while line := f.readline():
             x, y, z = line.strip().split(',')
             boxes.append((int(x), int(y), int(z)))
     boxes.sort()
 
-    shortest_connections = []
+    shortest_connections: list[tuple[Distance, Pair]] = []
     for i, box1 in enumerate(boxes):
         for box2 in boxes[i+1:]:
             pair = (box1, box2)
@@ -23,8 +30,7 @@ def process(file: str, num_connections: int) -> int:
                 shortest_connections = shortest_connections[:num_connections]
     connections = {pair for distance, pair in shortest_connections}
 
-    # circuits is a dict of sets; each set’s key is its smallest member
-    circuits = {}
+    circuits: Circuits = {}
     for pair in connections:
         add_pair_to_circuits(pair, circuits)
 
@@ -40,7 +46,7 @@ def process(file: str, num_connections: int) -> int:
     circuit_sizes.sort(reverse=True)
     return functools.reduce(operator.mul, circuit_sizes[:3], 1)
 
-def add_pair_to_circuits(pair, circuits):
+def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
     # check the invariant out of paranoia
     for box, circuit in circuits.items():
         assert box == min(circuit)
