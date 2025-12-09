@@ -70,9 +70,9 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
     for box, circuit in circuits.items():
         assert box == min(circuit)
     box1, box2 = pair
-    branch = None
+    debug_branch = None
     if box1 in circuits:
-        branch = 'box1 in circuits'
+        debug_branch = 'box1 in circuits'
         # update circuit
         circuit = circuits[box1]
         assert box1 in circuit
@@ -97,7 +97,7 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
                     circuits[other_box] = circuit
                 break
     elif box2 in circuits:
-        branch = 'box2 in circuits'
+        debug_branch = 'box2 in circuits'
         # update circuit, reindex with box1 as newly-smallest member
         circuit = circuits[box2]
         circuit.add(box1)
@@ -121,11 +121,11 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
                     circuits[other_box] = circuit
                 break
     else:
-        branch = 'else'
+        debug_branch = 'else'
         for other_box, circuit in circuits.items():
             # find other circuit to add to
             if box1 in circuit or box2 in circuit:
-                branch = 'box1 in circuit or box2 in circuit'
+                debug_branch = 'box1 in circuit or box2 in circuit'
                 if box1 in circuit and box2 in circuit:
                     # no need to update anything or look for anything to merge
                     return
@@ -133,7 +133,7 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
                 circuit.add(box1)
                 circuit.add(box2)
                 if box1 < other_box:
-                    branch += ', box1 < other_box'
+                    debug_branch += ', box1 < other_box'
                     # reindex with box1 as newly-smallest member
                     del circuits[other_box]
                     circuits[box1] = circuit
@@ -142,7 +142,7 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
                     if other_circuit == circuit:
                         continue
                     if box1 in other_circuit or box2 in other_circuit:
-                        branch += ', box1 in other_circuit or box2 in other_circuit'
+                        debug_branch += ', box1 in other_circuit or box2 in other_circuit'
                         # merge them
                         circuit.update(other_circuit)
                         if box1 < other_circuit_box or other_box < other_circuit_box:
@@ -159,12 +159,12 @@ def add_pair_to_circuits(pair: Pair, circuits: Circuits) -> None:
                         break
                 break
         else:
-            branch = 'else else'
+            debug_branch = 'else else'
             # no other circuit contains this connection, add new circuit
             circuits[box1] = { box1, box2 }
     assert box1 in {box for circuit in circuits.values() for box in circuit}
     assert box2 in {box for circuit in circuits.values() for box in circuit}, \
-        f'branch is {branch}'
+        f'debug_branch is {debug_branch}'
 
 
 for file in sys.argv[1:]:
