@@ -53,8 +53,11 @@ for file in sys.argv[1:]:
                 print(f'{max_part2_area=} because {dx=}<=2 or {dy=}<=2')
                 continue
             def is_legal_rectangle():
+                print(f'is_legal_rectangle: x∈({x1},{x2}), y∈({y1},{y2})')
                 for x in range(x1 + 1, x2):
                     for y in range(y1 + 1, y2):
+                        if x not in green_verticals and y not in green_horizontals:
+                            continue
                         x_area = OUTSIDE  # one of OUTSIDE, UPPER_EDGE, LOWER_EDGE, INSIDE
                         for x_incr in range(x):
                             for v in green_verticals.get(x_incr, []):
