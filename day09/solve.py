@@ -55,6 +55,8 @@ for file in sys.argv[1:]:
             def is_legal_rectangle():
                 for x in range(x1 + 1, x2):
                     for y in range(y1 + 1, y2):
+                        if x not in green_verticals and y not in green_horizontals and x != x1 + 1 and x != x2 - 1 and y != y1 + 1 and y2 != y2 - 1:
+                            continue
                         x_area = OUTSIDE  # one of OUTSIDE, UPPER_EDGE, LOWER_EDGE, INSIDE
                         for x_incr in range(x):
                             for v in green_verticals.get(x_incr, []):
