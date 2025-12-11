@@ -123,3 +123,5 @@ for file in sys.argv[1:]:
         total_presses += needed_buttons(machine)
 
     print(f'{file}: {total_presses} presses needed')
+    if file == 'input.sample':
+        assert total_presses == 7
