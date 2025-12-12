@@ -41,4 +41,4 @@ def paths_from_to(
                 paths_to_dst[other] = paths
                 worklist.append(other)
 
-    return paths_to_dst[src]
+    return paths_to_dst.get(src, 0)
