@@ -1,7 +1,18 @@
-#!/usr/bin/env python3
-import sys
-
 type Machine = str
+
+def parse_machines(file: str) -> tuple[dict[Machine, list[Machine]], dict[Machine, list[Machine]]]:
+    outwards: dict[Machine, list[Machine]] = {}
+    with open(file) as f:
+        for line in f:
+            machine, others = line.strip().split(': ')
+            outwards[machine] = others.split(' ')
+
+    inwards: dict[Machine, list[Machine]] = {}
+    for machine, others in outwards.items():
+        for other in others:
+            inwards.setdefault(other, []).append(machine)
+
+    return outwards, inwards
 
 def paths_from_to(
         outwards: dict[Machine, list[Machine]],
@@ -31,22 +42,3 @@ def paths_from_to(
                 worklist.append(other)
 
     return paths_to_dst[src]
-
-for file in sys.argv[1:]:
-    outwards: dict[Machine, list[Machine]] = {}
-    with open(file) as f:
-        for line in f:
-            machine, others = line.strip().split(': ')
-            outwards[machine] = others.split(' ')
-
-    inwards: dict[Machine, list[Machine]] = {}
-    for machine, others in outwards.items():
-        for other in others:
-            inwards.setdefault(other, []).append(machine)
-
-    paths_from_you_to_out = paths_from_to(outwards, inwards, 'you', 'out')
-    print(f'{file}: {paths_from_you_to_out} paths from {'you'!r} to {'out'!r}')
-    if file == 'input.sample':
-        assert paths_from_you_to_out == 5
-    elif file == 'input.mine':
-        assert paths_from_you_to_out == 5
