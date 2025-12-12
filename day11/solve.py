@@ -31,8 +31,10 @@ for file in sys.argv[1:]:
                 continue
             other_downstreams.add(machine)
             other_downstreams.update(machine_downstreams)
-            paths_to_out[other] = sum(paths_to_out.get(sibling, 0) for sibling in outwards[other])
-            worklist.append(other)
+            paths = sum(paths_to_out.get(sibling, 0) for sibling in outwards[other])
+            if paths != paths_to_out.get(other):
+                paths_to_out[other] = paths
+                worklist.append(other)
 
     paths_from_you_to_out = paths_to_out['you']
     print(f'{file}: {paths_from_you_to_out} paths from {'you'!r} to {'out'!r}')
