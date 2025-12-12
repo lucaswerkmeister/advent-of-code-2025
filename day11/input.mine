@@ -1,0 +1,10 @@
+you: a b d
+a: c
+b: c
+c: d e
+d: out
+e: f
+f: out
+x: f y
+y: z
+z: x
